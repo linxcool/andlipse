@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            objectClass="org.eclipse.core.runtime.IAdaptable"
+            id="andlipse.contribution">
+         <menu
+               label="Ymn Tools"
+               path="additions"
+               id="andlipse.menu">
+            <separator
+                  name="group">
+            </separator>
+         </menu>
+         <action
+               label="Insert Code To Constructor"
+               class="com.linxcool.andlipse.action.cls.ConstructorAction"
+               menubarPath="andlipse.menu/group"
+               enablesFor="1"
+               id="andlipse.clsConstructorAction">
+         </action>
+         <action
+               label="Convert To Smali"
+               class="com.linxcool.andlipse.action.smali.ConvertAction"
+               menubarPath="andlipse.menu/group"
+               enablesFor="1"
+               id="andlipse.smaliConvertAction">
+         </action>
+         <action
+               label="Open In Explorer"
+               class="com.linxcool.andlipse.action.cmn.ExplorerAction"
+               menubarPath="andlipse.menu/group"
+               enablesFor="1"
+               id="andlipse.cmnExplorerAction">
+         </action>
+      </objectContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.console.consoleFactories">
+      <actionSet>
+         <action
+               class="com.linxcool.andlipse.core.LConsole"
+               id="andlipse.coreConsole">
+         </action>
+      </actionSet>
+   </extension>
+</plugin>
