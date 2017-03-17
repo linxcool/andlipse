@@ -1,10 +1,7 @@
 package com.linxcool.andlipse.action.smali;
 
 import java.io.File;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -19,13 +16,11 @@ public class ConvertJob extends LJob {
 	private static final float TIME_MILLIS_OF_ONE_LENGTH_APK = 0.00424f;
 	private static final float TIME_MILLIS_OF_ONE_LENGTH_JAR = 0.00314f;
 	
-	private IProject project;
 	private File jarFile;
 	private File apkFile;
 
 	public ConvertJob(IWorkbenchWindow window) {
 		super("ConvertJob", window);
-		project = LResource.getProject(window);
 
 		FileInfo jarInfo = LResource.getJarFile(window);
 		FileInfo apkInfo = LResource.getApkFile(window);
@@ -93,24 +88,5 @@ public class ConvertJob extends LJob {
 		return (long) (oneMillis * size / 100);
 	}
 	
-	private void monitorProgress(final IProgressMonitor monitor, final long millis) {
-		ExecutorService service = Executors.newSingleThreadExecutor();
-		service.submit(new Runnable() {
-			@Override
-			public void run() {
-				for (int i = 0; i < 100; i++) {
-					try {
-						Thread.sleep(millis);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-					if (!monitor.isCanceled()) {
-						monitor.subTask(i + "%");
-						monitor.worked(1);
-					}
-				}
-			}
-		});
-	}
 
 }

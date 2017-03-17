@@ -1,5 +1,6 @@
 package com.linxcool.andlipse.core;
 
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.console.IConsoleFactory;
@@ -65,9 +66,16 @@ public class LConsole implements IConsoleFactory {
 	 * @param activate 是否激活控制台
 	 */
 	public static void print(String message, boolean activate) {
-		MessageConsoleStream printer = LConsole.get().newMessageStream();
-		printer.setActivateOnWrite(activate);
-		printer.println(message);
+		print(message, activate, null);
 	}
 
+	public static void print(String message, boolean activate, Color color) {
+		MessageConsoleStream printer = LConsole.get().newMessageStream();
+		printer.setActivateOnWrite(activate);
+		if(color != null) {
+			printer.setColor(color);
+		}
+		printer.println(message);
+	}
+	
 }
