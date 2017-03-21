@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Properties;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.ui.IWorkbenchWindow;
 
 import com.linxcool.andlipse.action.LJob;
@@ -22,11 +23,16 @@ public class ConstructorJob extends LJob {
 	public ConstructorJob(IWorkbenchWindow window) {
 		super("ConstructorJob", window);
 	}
+	
+	@Override
+	protected IStatus run(IProgressMonitor monitor) {
+		return super.run(monitor);
+	}
 
 	@Override
 	protected boolean execute(IProgressMonitor monitor) throws Exception {
 		LConsole.print("start insert code to class...");
-		
+
 		File proDir = project.getLocation().toFile();
 		File rulesFile = new File(proDir, "hotfix-rules.pro");
 		if (!rulesFile.exists() || rulesFile.isDirectory()) {
@@ -38,34 +44,39 @@ public class ConstructorJob extends LJob {
 		properties.load(new FileInputStream(rulesFile));
 
 		File clsDir = new File(proDir, getTargetDir(properties));
-		List<File> clsFiles = new ArrayList<>();
+		List<File> clsFiles = new ArrayList<File>();
 		loadClassFiles(clsFiles, clsDir);
-		
+
 		if (clsFiles.isEmpty()) {
 			LConsole.print(String.format("can't find any class file on %s.", clsDir));
 			return false;
 		}
+		
+		ClassPool classPool = ClassPool.getDefault();
+		classPool.appendClassPath(clsDir.getPath());
+		
+		File hotfixDir = new File(proDir, "build-hotfix");
+		hotfixDir.delete();
 
-		ClassPool classes = ClassPool.getDefault();
-		classes.appendClassPath(clsDir.getPath());
-
-		// List<String> clsFilter = getTargetFilter(properties);
 		for (File file : clsFiles) {
 			String path = file.getPath().substring(clsDir.getPath().length() + 1);
 			path = path.substring(0, path.length() - 6);
 			String cls = path.replace("\\", ".");
+
+			CtClass c = classPool.get(cls);
 			
-			CtClass c = classes.get(cls);
+			c.stopPruning(true);
+			if (c.isFrozen()) c.defrost();
+			
 			CtConstructor ctConstructor = c.getConstructors()[0];
 			ctConstructor.insertAfter("System.out.println(com.linxcool.hotfix.AntilazyLoad.class);");
-			c.writeFile(proDir.getPath() + "/build-hotfix");
-			c.defrost();
+			c.writeFile(hotfixDir.getPath());
 		}
-
+		
 		LConsole.print("finished insert code to class.");
 		return true;
 	}
-	
+
 	private String getTargetDir(Properties properties) {
 		return properties.getProperty("dir", "bin/classes");
 	}
@@ -83,7 +94,7 @@ public class ConstructorJob extends LJob {
 			return;
 		}
 		if (current.isFile()) {
-			if(current.getName().endsWith(".class")) {
+			if (current.getName().endsWith(".class")) {
 				list.add(current);
 			}
 		} else {

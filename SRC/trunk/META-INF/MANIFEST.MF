@@ -8,9 +8,9 @@ Bundle-Vendor: Linxcool
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.core.resources,
- org.eclipse.jdt.core;bundle-version="3.11.2",
- org.eclipse.jdt.ui;bundle-version="3.11.2",
- org.eclipse.ui.console;bundle-version="3.6.100"
+ org.eclipse.jdt.core,
+ org.eclipse.jdt.ui,
+ org.eclipse.ui.console
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8,
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: .,
