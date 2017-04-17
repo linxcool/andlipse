@@ -44,7 +44,7 @@ public class ConstructorJob extends LJob {
 		properties.load(new FileInputStream(rulesFile));
 
 		File clsDir = new File(proDir, getTargetDir(properties));
-		List<File> clsFiles = new ArrayList<File>();
+		List<File> clsFiles = new ArrayList<>();
 		loadClassFiles(clsFiles, clsDir);
 
 		if (clsFiles.isEmpty()) {
